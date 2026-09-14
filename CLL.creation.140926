@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct node{
+    int data ;
+    struct node *next;
+
+};
+
+int main(){
+    int ch;
+    struct node  *head = NULL;
+    struct node  *new,*temp;
+    
+        
+    
+     
+
+    do {
+        new=  (struct node*)malloc(sizeof(struct node));
+
+        printf("enter the data part :");
+        scanf("%d", &new->data);
+        new->next = NULL;
+
+
+        if (head== NULL) {
+            head = new;
+            temp = new;
+            new->next = head;
+
+        } else{
+             temp->next = new;
+             new->next= head;
+             temp=new;
+
+        }
+
+        
+
+        printf("enter your choice (1 to continue): ");
+        scanf("%d",&ch);
+    }  while (ch == 1);
+       
+    printf("The circular linked list is : ");
+    temp = head;
+    if(head != NULL){
+        do{
+            printf("%d",temp->data);
+            temp = temp->head;
+        }
+    } return 0;
+
+     
+} 
