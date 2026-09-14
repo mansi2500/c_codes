@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int data;
+    struct node *next;
+};
+
+struct node *head = NULL;
+
+void deleteFromBeginning() {
+    if (head == NULL) {
+        printf("CLL is empty\n");
+        return;
+    }
+    
+    if (head->next == head) {
+        free(head);
+        head = NULL;
+    } else {
+        struct node *p = head;
+        while (p->next != head) {
+            p = p->next;
+        }
+        struct node *t = head;
+        p->next = head->next;
+        head = head->next;
+        free(t);
+    }
+}
+
+void deleteFromEnd() {
+    if (head == NULL) {
+        printf("CLL is empty\n");
+        return;
+    }
+    
+    if (head->next == head) {
+        free(head);
+        head = NULL;
+    } else {
+        struct node *p = head;
+        struct node *t = NULL;
+        while (p->next != head) {
+            t = p;
+            p = p->next;
+        }
+        t->next = head;
+        free(p);
+    }
+}
+
+void deleteFromPosition(int pos) {
+    if (head == NULL) {
+        printf("CLL is empty\n");
+        return;
+    }
+    
+    if (pos == 1) {
+        deleteFromBeginning();
+        return;
+    }
+    
+    struct node *p = head;
+    struct node *t = NULL;
+    
+    for (int i = 1; i < pos && p->next != head; i++) {
+        t = p;
+        p = p->next;
+    }
+    
+    if (p == head) {
+        return;
+    }
+    
+    t->next = p->next;
+    free(p);
+}
