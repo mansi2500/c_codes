@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int stack[MAX];
+int top = -1;
+
+void push(int val) {
+    stack[++top] = val;
+}
+
+int pop() {
+    return stack[top--];
+}
+
+int applyOp(int a, int b, char op) {
+    switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+    }
+    return 0;
+}
+
+int evaluatePostfix(char *exp) {
+    int i = 0;
+    while (exp[i] != '\0') {
+        if (exp[i] == ' ' || exp[i] == '\n') {
+            i++;
+            continue;
+        }
+
+        if (isdigit(exp[i])) {
+            int val = 0;
+            while (isdigit(exp[i])) {
+                val = (val * 10) + (exp[i] - '0');
+                i++;
+            }
+            push(val);
+            continue;
+        } else {
+            int val2 = pop();
+            int val1 = pop();
+            push(applyOp(val1, val2, exp[i]));
+        }
+        i++;
+    }
+    return pop();
+}
+
+int main() {
+    char expression[MAX];
+
+    printf("Enter postfix expression (use spaces between numbers): ");
+    fgets(expression, MAX, stdin);
+
+    int result = evaluatePostfix(expression);
+    printf("Result: %d\n", result);
+
+    return 0;
+}
