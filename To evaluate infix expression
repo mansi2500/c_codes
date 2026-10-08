@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <ctype.h>
+
+#define MAX 100
+
+int values[MAX];
+char ops[MAX];
+int vTop = -1;
+int oTop = -1;
+
+void pushVal(int val) {
+    values[++vTop] = val;
+}
+
+int popVal() {
+    return values[vTop--];
+}
+
+void pushOp(char op) {
+    ops[++oTop] = op;
+}
+
+char popOp() {
+    return ops[oTop--];
+}
+
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    return 0;
+}
+
+int applyOp(int a, int b, char op) {
+    switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/': return a / b;
+    }
+    return 0;
+}
+
+int evaluate(char *exp) {
+    int i = 0;
+    while (exp[i] != '\0') {
+        if (exp[i] == ' ' || exp[i] == '\n') {
+            i++;
+            continue;
+        }
+
+        if (exp[i] == '(') {
+            pushOp(exp[i]);
+        } else if (isdigit(exp[i])) {
+            int val = 0;
+            while (isdigit(exp[i])) {
+                val = (val * 10) + (exp[i] - '0');
+                i++;
+            }
+            pushVal(val);
+            continue;
+        } else if (exp[i] == ')') {
+            while (oTop != -1 && ops[oTop] != '(') {
+                int val2 = popVal();
+                int val1 = popVal();
+                char op = popOp();
+                pushVal(applyOp(val1, val2, op));
+            }
+            popOp();
+        } else {
+            while (oTop != -1 && precedence(ops[oTop]) >= precedence(exp[i])) {
+                int val2 = popVal();
+                int val1 = popVal();
+                char op = popOp();
+                pushVal(applyOp(val1, val2, op));
+            }
+            pushOp(exp[i]);
+        }
+        i++;
+    }
+
+    while (oTop != -1) {
+        int val2 = popVal();
+        int val1 = popVal();
+        char op = popOp();
+        pushVal(applyOp(val1, val2, op));
+    }
+
+    return popVal();
+}
+
+int main() {
+    char expression[MAX];
+
+    printf("Enter an expression: ");
+    fgets(expression, MAX, stdin);
+
+    int result = evaluate(expression);
+    printf("Result: %d\n", result);
+
+    return 0;
+}
